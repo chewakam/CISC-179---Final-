@@ -1,0 +1,91 @@
+board = [['.', '.', '.'],
+         ['.', '.', '.'],
+         ['.', '.', '.']]
+        
+user = True 
+# prints board after every input 
+def print_board(board):
+    for row in board:
+        for element in row:
+            print(f"{element}", end=" ")
+        print()
+# check if input is 1-9
+def check_input(player_input):
+    if not isnum(player_input): return False
+    player_input = int(player_input)
+    if player_input < 1 or player_input > 9: return False
+    return True 
+# checks if it is an integer (1-9), if otherwise than it is considered an error 
+def isnum(player_input):
+    if not player_input.isnumeric():
+        print('Error: Not a valid number')
+        return False 
+    else: return True 
+# checks if poition on the board is already taken 
+def alreadytaken(pos, board):
+    row, col = pos
+    if board[row][col] != ".":
+        print('Yikes, already taken.')
+        return True
+    else: return False 
+# translates input into matching rown and column on board 
+def positions(player_input):
+    row = int(player_input / 3)
+    col = player_input % 3
+    return (row, col)
+# updates board with either 'x' or 'o'
+def add_to_board(pos, board, active_user):
+    row, col = pos
+    board[row][col] = active_user
+# 
+def current_user(user):
+    if user: return 'x'
+    else: return 'o'
+# Check if player has won 
+def check_winner(board, active_user):
+    # Check if the player has won by rows 
+    for row in board:
+        if all(spot == active_user for spot in row):
+            return True
+    # Check if player has won by columns
+    for col in range(3):
+        if all(board[row][col] == active_user for row in range(3)):
+            return True
+    # Check if player has won by diagonals
+    if all(board[i][i] == active_user for i in range(3)):
+        return True
+    if all(board[i][2-i] == active_user for i in range(3)):
+        return True
+    return False
+# checks if the board is full 
+def is_board_full(board):
+    for row in board:
+        if '.' in row:
+            return False
+    return True
+# Runs a loop that calls on the defenitions provided and prints appropriate text 
+while True:
+    print_board(board)
+    active_user = current_user(user)
+    player_input = input('Enter a number 1 through 9: ')
+    if not check_input(player_input):
+        print('Try again.')
+        continue
+    player_input = int(player_input) - 1
+    pos = positions(player_input)
+    if alreadytaken(pos, board):
+        print('Try again.')
+        continue 
+    add_to_board(pos, board, active_user)
+    
+    if check_winner(board, active_user):
+        print_board(board)
+        print(f" Hooray! Player '{active_user}' wins!")
+        break
+    
+    if is_board_full(board):
+        print_board(board)
+        print("Uh Oh a draw!")
+        break
+    # Toggle 
+    user = not user
